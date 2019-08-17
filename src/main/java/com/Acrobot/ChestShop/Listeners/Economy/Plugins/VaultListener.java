@@ -102,7 +102,14 @@ public class VaultListener extends EconomyAdapter {
         if (!checkSetup() || !event.getAmount().equals(BigDecimal.ZERO)) {
             return;
         }
-
+        //ChestShopPlus Start
+        com.Acrobot.ChestShop.Events.PreAmountCheckEvent preAmountCheckEvent = new com.Acrobot.ChestShop.Events.PreAmountCheckEvent(event.getAccount(), event.getAmount());
+        ChestShop.callEvent(preAmountCheckEvent);
+        if(preAmountCheckEvent.isCancelled()) {
+          event.setAmount(BigDecimal.ZERO);
+          return;
+        }
+        //ChestShopPlus End
         double balance = 0;
         OfflinePlayer lastSeen = Bukkit.getOfflinePlayer(event.getAccount());
 
@@ -130,7 +137,14 @@ public class VaultListener extends EconomyAdapter {
         if (!checkSetup() || event.hasEnough()) {
             return;
         }
-
+        //ChestShopPlus Start
+        com.Acrobot.ChestShop.Events.PreCurrencyCheckEvent preCurrencyCheckEvent = new com.Acrobot.ChestShop.Events.PreCurrencyCheckEvent(event.getAccount(), event.getAmount());
+        ChestShop.callEvent(preCurrencyCheckEvent);
+        if(preCurrencyCheckEvent.isCancelled()) {
+          event.hasEnough(true);
+          return;
+        }
+        //ChestShopPlus End
         World world = event.getWorld();
         OfflinePlayer lastSeen = Bukkit.getOfflinePlayer(event.getAccount());
 
@@ -177,7 +191,14 @@ public class VaultListener extends EconomyAdapter {
         if (!checkSetup() || event.isAdded()) {
             return;
         }
-
+        //ChestShopPlus Start
+        com.Acrobot.ChestShop.Events.PreCurrencyAddEvent preCurrencyAddEvent = new com.Acrobot.ChestShop.Events.PreCurrencyAddEvent(event.getTarget(), event.getAmount());
+        ChestShop.callEvent(preCurrencyAddEvent);
+        if(preCurrencyAddEvent.isCancelled()) {
+          event.setAdded(true);
+          return;
+        }
+        //ChestShopPlus End
         World world = event.getWorld();
         //String lastSeen = NameManager.getLastSeenName(event.getTarget());
         OfflinePlayer lastSeen = Bukkit.getOfflinePlayer(event.getTarget());
@@ -201,7 +222,17 @@ public class VaultListener extends EconomyAdapter {
         if (!checkSetup() || event.isSubtracted()) {
             return;
         }
-
+        //ChestShopPlus Start
+        com.Acrobot.ChestShop.Events.PreCurrencySubtractEvent preCurrencySubtractEvent = new com.Acrobot.ChestShop.Events.PreCurrencySubtractEvent(event.getTarget(), event.getAmount());
+        ChestShop.callEvent(preCurrencySubtractEvent);
+        if(preCurrencySubtractEvent.isCancelled()) {
+          if(preCurrencySubtractEvent.isBalanceSufficient()) {
+            event.setSubtracted(true);
+            return;
+          }
+          event.setSubtracted(false);
+          return;
+        }
         World world = event.getWorld();
         //String lastSeen = NameManager.getLastSeenName(event.getTarget());
         OfflinePlayer lastSeen = Bukkit.getOfflinePlayer(event.getTarget());

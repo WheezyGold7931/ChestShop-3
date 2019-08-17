@@ -349,9 +349,16 @@ public class NameManager implements Listener {
             return true;
         }
 
+        AccountOwnerCheckEvent event = new AccountOwnerCheckEvent(player, name);
+        ChestShop.callEvent(event);
+        if(event.isCancelled())
+          return true;
         Account account = getAccountFromShortName(name, false);
-        return account != null && (account.getUuid().equals(player.getUniqueId())
-                || (!account.getName().equalsIgnoreCase(name) && Permission.otherName(player, base, account.getName())));
+        if(account == null && name.startsWith("#")) return false;
+        if(account == null) { return false; }
+
+        return account.getUuid().equals(player.getUniqueId())
+                || (!account.getName().equalsIgnoreCase(name) && Permission.otherName(player, base, account.getName()));
     }
 
     public static boolean isAdminShop(UUID uuid) {
